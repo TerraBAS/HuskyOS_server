@@ -1,0 +1,95 @@
+function downloadUpdate()
+print("Downloading file list...")
+sleep(2)
+-- GET the contents from pastebin
+	local response = http.get(
+		"http://pastebin.com/raw.php?i=yLYrEnig"
+		)
+		
+	if response then
+		
+		local sResponse = response.readAll()
+		response.close()
+		fs.makeDir("./.sys/update_cache")
+		print("setting up download for additional files...")
+		sleep(3)
+		local file = fs.open("./.sys/update_cache/FileList.xml", "w" )
+		file.write( sResponse )
+		file.close()
+		print("starting update-setup...")
+		shell.run("./.sys/update_cache/FileList.xml")
+		
+	else
+		print( "Something went wrong..." )
+	end
+
+
+
+
+
+end
+
+
+
+
+function searchUpdate()  
+  local response = http.get(
+                    "http://huskyos.schwarzis.net/checkversion.php?edition="..os.edition()
+                    )
+                   
+            if response then
+                   print("connected!")
+				   print("now checking versions...")
+				  sleep(3)
+                    local sResponse = response.readAll()
+                    response.close()
+					onlineVers = tonumber(sResponse)
+                    localVers = os.versionNum()
+					if onlineVers > localVers then
+					print("update available!\n")
+					print("local version: HuskyOS Server "..localVers.."\ncurrent version: HuskyOS Server "..onlineVers)
+					print("")
+					write("Would you like to update? [Y|N]:")
+					yesorno = read()
+					if yesorno == "Y" then
+					
+					downloadUpdate()
+					
+					elseif yesorno == "y" then
+					downloadUpdate()
+					
+					else
+					print("update was cancelled by user")
+
+					
+
+					end
+					
+				else
+					print("No update available right now...")
+					end
+                   
+            else
+                    print( "Got no response from the update-server!" )
+					print("please try again later...")
+            end
+end
+print("\n       -------# HuskyOS updater #-------")
+print("Checking license...")
+sleep(2)
+local file = io.open("/.sys/etc/.hidden/PkfHosSv1.1", "r") -- open file in read
+key = file:read()
+if key == nil or config.readVal("activated") == false then
+activated = false
+else
+activated = true
+end
+
+if activated == true then
+print("\nHuskyOS will now check for available updates.")
+print("connecting to the HuskyOS-Servers...")
+sleep(1)
+searchUpdate()
+else
+print("\nHuskyOS is not activated! Cancelling update...\n")
+end
