@@ -1,4 +1,3 @@
-
 --[[
 -- Install safe versions of various library functions
 -- These will not put cfunctions on the stack, so don't break serialisation
@@ -16,7 +15,6 @@ xpcall = function( _fn, _fnErrorHandler )
 		return false, _fnErrorHandler( tResults[2] )
 	end
 end
-
 pcall = function( _fn, ... )
 	local typeT = type( _fn )
 	assert( typeT == "function", "bad argument #1 to pcall (function expected, got "..typeT..")" )
@@ -30,7 +28,6 @@ pcall = function( _fn, ... )
 		end
 	)
 end
-
 function pairs( _t )
 	local typeT = type( _t )
 	if typeT ~= "table" then
@@ -38,7 +35,6 @@ function pairs( _t )
 	end
 	return next, _t, nil
 end
-
 function ipairs( _t )
 	local typeT = type( _t )
 	if typeT ~= "table" then
@@ -53,7 +49,6 @@ function ipairs( _t )
 		return var, value
 	end, _t, 0
 end
-
 function coroutine.wrap( _fn )
 	local typeT = type( _fn )
 	if typeT ~= "function" then
@@ -69,7 +64,6 @@ function coroutine.wrap( _fn )
 		end
 	end
 end
-
 function string.gmatch( _s, _pattern )
 	local type1 = type( _s )
 	if type1 ~= "string" then
@@ -90,7 +84,6 @@ function string.gmatch( _s, _pattern )
 		return string.match( _s, _pattern, nFirst )
 	end
 end
-
 local nativesetmetatable = setmetatable
 function setmetatable( _o, _t )
 	if _t and type(_t) == "table" then
@@ -106,16 +99,14 @@ function setmetatable( _o, _t )
 	return nativesetmetatable( _o, _t )
 end
 ]]
-
 -- Install lua parts of the os api
  tArgs = {...}
 function os.version()
 	if turtle then
-		return "HuskyOS 1.2.1 - Server Edition in Turtle-mode"
+		return "HuskyOS 1.4 - Server Edition in Turtle-mode"
 	end
-	return "HuskyOS 1.2.1 - Server Edition"
+	return "HuskyOS 1.4 - Server Edition"
 end
-
 function os.edition()
 	return "server"
 	end
@@ -124,14 +115,9 @@ function os.info()
 	return "HuskyOS Server by TerraBAS"
 	end
 
-function os.versionNum()
-	return 1.3
-	end
-
 function os.pullEventRaw( _sFilter )
 	return coroutine.yield( _sFilter )
 end
-
 function os.pullEvent( _sFilter )
 	local eventData = { os.pullEventRaw( _sFilter ) }
 	if eventData[1] == "terminate" then
@@ -139,7 +125,6 @@ function os.pullEvent( _sFilter )
 	end
 	return unpack( eventData )
 end
-
 -- Install globals
 function sleep( _nTime )
     local timer = os.startTimer( _nTime )
@@ -147,7 +132,6 @@ function sleep( _nTime )
 		local sEvent, param = os.pullEvent( "timer" )
 	until param == timer
 end
-
 function write( sText )
 	local w,h = term.getSize()		
 	local x,y = term.getCursorPos()
@@ -207,7 +191,6 @@ function write( sText )
 	
 	return nLinesPrinted
 end
-
 function print( ... )
 	local nLinesPrinted = 0
 	for n,v in ipairs( { ... } ) do
@@ -216,7 +199,6 @@ function print( ... )
 	nLinesPrinted = nLinesPrinted + write( "\n" )
 	return nLinesPrinted
 end
-
 function printError( ... )
 	if term.isColour() then
 		term.setTextColour( colours.red )
@@ -224,10 +206,8 @@ function printError( ... )
 	print( ... )
 	term.setTextColour( colours.white )
 end
-
 function read( _sReplaceChar, _tHistory )
 	term.setCursorBlink( true )
-
     local sLine = ""
 	local nHistoryPos = nil
 	local nPos = 0
@@ -345,7 +325,6 @@ function read( _sReplaceChar, _tHistory )
 	
 	return sLine
 end
-
 loadfile = function( _sFile )
 	local file = fs.open( _sFile, "r" )
 	if file then
@@ -355,7 +334,6 @@ loadfile = function( _sFile )
 	end
 	return nil, "File not found"
 end
-
 dofile = function( _sFile )
 	local fnFile, e = loadfile( _sFile )
 	if fnFile then
@@ -365,7 +343,6 @@ dofile = function( _sFile )
 		error( e, 2 )
 	end
 end
-
 -- Install the rest of the OS api
 function os.run( _tEnv, _sPath, ... )
     local tArgs = { ... }
@@ -391,7 +368,6 @@ function os.run( _tEnv, _sPath, ... )
 	end
     return false
 end
-
 local nativegetmetatable = getmetatable
 local nativetype = type
 local nativeerror = error
@@ -402,7 +378,6 @@ function getmetatable( _t )
 	end
 	return nativegetmetatable( _t )
 end
-
 local tAPIsLoading = {}
 function os.loadAPI( _sPath )
 	local sName = fs.getName( _sPath )
@@ -433,17 +408,14 @@ function os.loadAPI( _sPath )
 	tAPIsLoading[sName] = nil
 	return true
 end
-
 function os.unloadAPI( _sName )
 	if _sName ~= "_G" and type(_G[_sName]) == "table" then
 		_G[_sName] = nil
 	end
 end
-
 function os.sleep( _nTime )
 	sleep( _nTime )
 end
-
 local nativeShutdown = os.shutdown
 function os.shutdown()
 	nativeShutdown()
@@ -451,7 +423,6 @@ function os.shutdown()
 		coroutine.yield()
 	end
 end
-
 local nativeReboot = os.reboot
 function os.reboot()
 	nativeReboot()
@@ -459,7 +430,6 @@ function os.reboot()
 		coroutine.yield()
 	end
 end
-
 -- Install the lua part of the HTTP api (if enabled)
 if http then
 	local function wrapRequest( _url, _post )
@@ -477,12 +447,10 @@ if http then
 	http.get = function( _url )
 		return wrapRequest( _url, nil )
 	end
-
 	http.post = function( _url, _post )
 		return wrapRequest( _url, _post or "" )
 	end
 end
-
 -- Load APIs
 local tApis = fs.list( "rom/apis" )
 for n,sFile in ipairs( tApis ) do
@@ -493,7 +461,6 @@ for n,sFile in ipairs( tApis ) do
 		end
 	end
 end
-
 local tApis = fs.list( "/.sys/API" )
 for n,sFile in ipairs( tApis ) do
 	if string.sub( sFile, 1, 1 ) ~= "." then
@@ -503,7 +470,6 @@ for n,sFile in ipairs( tApis ) do
 		end
 	end
 end
-
 if turtle then
 	local tApis = fs.list( "rom/apis/turtle" )
 	for n,sFile in ipairs( tApis ) do
@@ -515,7 +481,6 @@ if turtle then
 		end
 	end
 end
-
 -- Run the shell
 local ok, err = pcall( function()
 	parallel.waitForAny( 
@@ -526,12 +491,10 @@ local ok, err = pcall( function()
 			rednet.run()
 		end )
 end )
-
 -- If the shell errored, let the user read it.
 if not ok then
 	printError( err )
 end
-
 pcall( function()
 	term.setCursorBlink( false )
 	print( "[FATAL KERNEL ERROR!] Press any key to continue" )

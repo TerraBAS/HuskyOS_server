@@ -2,8 +2,7 @@
 
 
 
-version = "1.1"
-strtup = "5"
+
 
 shell.setAlias( "ls", "list" )
 shell.setAlias( "dir", "list" )
@@ -17,6 +16,26 @@ firststart = true
 	sPath = sPath..":/rom/programs"
 shell.setAlias( "rem" , "delete" )
 shell.setAlias( "reg" , "register" )
+function os.edition()
+	return "server"
+	end
+	
+function os.edition()
+	return "server"
+	end
+	
+function os.info()
+	return "HuskyOS Server by TerraBAS"
+	end
+
+function os.versionNum()
+	return 1.6
+	end
+	
+function os.versionBuild()
+	return 106005
+	end
+	
 function login()
 write("Login as: ")
 username = read()
@@ -48,6 +67,7 @@ passwd = read("*")
 		print("Login successful!")
 		sleep(1)
 		os.run( {}, "/.sys/etc/bios.lua" , username)
+		
 
 
 	else
@@ -58,19 +78,26 @@ passwd = read("*")
 end
 end
 end
+shell.run("/.sys/etc/version")
 term.setCursorPos(1,1)
+os.loadAPI("/.sys/API/config")
+config.load("/","HuskyOS.conf")
+if config.readVal("resumeUpdate") == true then
+shell.run("/.sys/etc/resumeupdate")
+os.reboot()
+end
 print("Bootmgr loaded! Now loading HuskyOS-Server...")
-term.setCursorPos(1,2)
 print("please wait...")
 term.setCursorPos(1,3)
 print("Loading kernel...")
 paintutils.drawLine(1, 19, 1, 19, colours.blue)
 term.setCursorPos(1,4)
 term.setBackgroundColor(colors.black)
+strtup = "5"
 print("Loading API's...")
 term.setBackgroundColor(colors.black)
-os.loadAPI("/.sys/API/config")
-config.load("./","HuskyOS.conf")
+os.loadAPI("/modt")
+
 firstBoot = config.readVal("firstboot")
 sleep(1)
 term.setCursorPos(1,5)
@@ -175,6 +202,13 @@ sleep(180)
 os.shutdown()
 end
 
+if key ~= nil and config.readVal("activated") == false then
+term.clear()
+term.setTextColour(colours.red)
+print("\n\nDETECTED CORRUPT/MODIFIED LICENSE!\nYou have to reinstall HuskyOS...")
+sleep(180)
+os.shutdown()
+end
 
 if fs.exists("/.sys/etc/.hidden/fblstruS") == true then
 config.writeVal("firstboot","false")
@@ -235,8 +269,9 @@ print("Only " ..strtup.. " startup(s) left!")
 end
 term.setTextColour(colours.white)
 print("")
-print("Welcome to HuskyOS-Server V "..version.." by TerraBAS!")
-print("Last login: N/A")
+print(modt.showmodt())
+--print("Welcome to HuskyOS-Server V "..version.." by TerraBAS!")
+--print("Last login: N/A")
 print("")
 print("SSH Server currently out of order...")
 print("Done loading system!")
@@ -267,10 +302,11 @@ sleep(3)
 term.clear()
 term.setCursorPos(1,1)
 print("")
-print("Welcome to HuskyOS-Server V "..version.." by TerraBAS!")
-print("Last login: N/A")
+print(modt.showmodt())
+--print("Welcome to HuskyOS-Server V "..version.." by TerraBAS!")
+--print("Last login: N/A")
 print("")
-print("SSH Server currently out of order...")
+--print("SSH Server currently out of order...")
 print("Done loading system!")
 print("Waiting for user input...")
 print("")

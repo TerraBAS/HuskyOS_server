@@ -1,4 +1,4 @@
-os.loadAPI("/.sys/config/HuskyOSconf")
+
 function postKey(key, usrName, pw)
 
                 http.request(
@@ -21,34 +21,7 @@ function postKey(key, usrName, pw)
    
    
    
-   
-   
-   
-   --First lets read the file and put the contents in a table name tContents
-local file = io.open("/.sys/config/HuskyOSconf", "r")
-sContents = file:read() -- capture file in a string
-file:close()
-if sContents then
-        tContents = textutils.unserialize(sContents)
-else
-        tContents = {}
-end
-if tContents == nil then
-tContents = {test}
-end
---Print a specific line
-print(tContents[15])
 
-
---Modify a specific line
-table.remove(tContents, 15) -- will remove line 3 so we can insert the new line 3
-table.insert(tContents, 15, "activated = true") -- inserts the string "New Infomation" on line 3 in the table.
-
---Convert table to string and save the file
-sContents = textutils.serialize(tContents)
-local file = io.open("/.sys/config/HuskyOSconf", "w")
-file:write(sContents)
-file:close()
    
 local file = fs.open(".sys/etc/.hidden/PkfHosSv1.1","w")
 
@@ -67,6 +40,7 @@ file.close()
    textutils.slowWrite("Writing registry...")
    print("")
    config.writeVal("activated","true")
+   config.save()
    sleep(2)
    textutils.slowWrite("HuskyOS sucessfully activated!")
    print("")
@@ -161,7 +135,7 @@ function post(one, two)
 term.clear()
 term.setCursorPos(1,1)
 textutils.slowWrite("       ---HuskyOS activation program---")
-if HuskyOSconf.activated() == true then
+if config.readVal("activated") == true then
 print("")
 print("")
 print("You have already registered this version of HuskyOS!")
@@ -179,4 +153,5 @@ onlinePassword = read("*")
 print("")
 print("Connecting to the HuskyOS license servers...")
 post(onlineUser, onlinePassword)
+config.load("/","HuskyOS.conf")
 end
